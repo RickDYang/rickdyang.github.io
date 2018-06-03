@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="机器学习,Coursera,数学,学习笔记," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Study notes part 2 for machine learning in Coursera. Will demonstrate some mathematics behinds lessons and summarize keys points. 1. Neural NetworkCost Function$J(\Theta) = - \frac{1}{m} \sum_{i=1}^m">
+<meta name="keywords" content="机器学习,Coursera,数学,学习笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Study Notes II - Coursera Machine Learning">
+<meta property="og:url" content="http://blog.rickdyang.me/2017-03//Coursera_ML_02/index.html">
+<meta property="og:site_name" content="Rick Yang的博客--记录和分享">
+<meta property="og:description" content="Study notes part 2 for machine learning in Coursera. Will demonstrate some mathematics behinds lessons and summarize keys points. 1. Neural NetworkCost Function$J(\Theta) = - \frac{1}{m} \sum_{i=1}^m">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-06-03T04:12:49.898Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Study Notes II - Coursera Machine Learning">
+<meta name="twitter:description" content="Study notes part 2 for machine learning in Coursera. Will demonstrate some mathematics behinds lessons and summarize keys points. 1. Neural NetworkCost Function$J(\Theta) = - \frac{1}{m} \sum_{i=1}^m">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://blog.rickdyang.me/2017-03//Coursera_ML_02/"/>
+
+
+
+
+
+  <title>Study Notes II - Coursera Machine Learning | Rick Yang的博客--记录和分享</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Rick Yang的博客--记录和分享</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.rickdyang.me/2017-03/Coursera_ML_02/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Rick Yang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rick Yang的博客--记录和分享">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Study Notes II - Coursera Machine Learning</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-13T00:00:00-04:00">
+                2017-03-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Machine-Learning/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017-03/Coursera_ML_02/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017-03//Coursera_ML_02/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Study notes part 2 for machine learning in Coursera. Will demonstrate some mathematics behinds lessons and summarize keys points.</p>
+<h3 id="1-Neural-Network"><a href="#1-Neural-Network" class="headerlink" title="1. Neural Network"></a>1. Neural Network</h3><p><strong>Cost Function</strong><br>$J(\Theta) = - \frac{1}{m} \sum_{i=1}^m \sum_{k=1}^K \left[y^{(i)}_k \log ((h_\Theta (x^{(i)}))_k) + (1 - y^{(i)}_k)\log (1 - (h_\Theta(x^{(i)}))_k)\right] + \frac{\lambda}{2m}\sum_{l=1}^{L-1} \sum_{i=1}^{s_l} \sum_{j=1}^{s_{l+1}} ( \Theta_{j,i}^{(l)})^2$<br>$K$ = number of output classes or classifications.<br>$L$ = total numbers of layers including input &amp; ouput layers<br>$s_l$ = numbers of units (not including bias unit) in layer $l$<br><a id="more"></a></p>
+<ul>
+<li><p>Hypothesis part<br>$-\frac{1}{m} \sum_{i=1}^m \sum_{k=1}^K \left[y^{(i)}_k \log ((h_\Theta (x^{(i)}))_k) + (1 - y^{(i)}_k)\log (1 - (h_\Theta(x^{(i)}))_k)\right]$<br>where $y$ is $K$ length vector which ith elment is 1 only when $y$ is ith class while others are 0.<br>vectorization form:<br>$-\frac{1}{m} \sum_{i=1}^m (y \log (h_\theta (x)) + (1 - y)\log (1 - h_\theta(x)))$<br>The above part is just sum of each data for cost of final hypothesis vs. real result.<br>Pseudo code in Octave</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:m</span><br><span class="line">    <span class="comment">% calculate final hx</span></span><br><span class="line">    hx = x(<span class="built_in">i</span>);</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">2</span>:L</span><br><span class="line">        hx = sigmoid([<span class="number">1</span> hx] * theta(<span class="built_in">j</span><span class="number">-1</span>)); <span class="comment">% 1 is to add bias unit</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    <span class="comment">% end of calculate final hx</span></span><br><span class="line">    J += - <span class="built_in">log</span>(hx) * y - <span class="built_in">log</span>(<span class="number">1</span> - hx) * (<span class="number">1</span> - y);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">J = J / m;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Regularization part<br>$\frac{\lambda}{2m}\sum_{l=1}^{L-1} \sum_{i=1}^{s_l} \sum_{j=1}^{s_{l+1}} ( \Theta_{j,i}^{(l)})^2$<br>$\Theta$ in each layer is matrix to map value from one layer to next layer. So $\Theta$ has three dimentions notation.<br>The above regulariztion part is just square sum of all $\theta$ except bias unit in entire $\Theta$ network.<br>Pseudo code in Octave:</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:L - <span class="number">1</span></span><br><span class="line">    J_r += sum(sum(theta(<span class="built_in">i</span>).^<span class="number">2</span>));</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">J_r = J_r * lambda/(<span class="number">2</span> * m);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="2-Backpropagation-Algorithm"><a href="#2-Backpropagation-Algorithm" class="headerlink" title="2. Backpropagation Algorithm"></a>2. Backpropagation Algorithm</h3><p>Backpropagation Algorithm steps:</p>
+<ul>
+<li>For each trainng sample<br>Forward propagation to calculte all hypothesis values in each layer till to output layer, $a^l$ for $l=2, 3, …, L$</li>
+<li>Compute $\delta^{(L)}=a^{(L)} - y$</li>
+<li>Compute $\delta^{(L-1)}, \delta^{(L-2)},\dots,\delta^{(2)}$, by $\delta^{(l)} = ((\Theta^{(l)})^T \delta^{(l+1)}) \cdot (a^{(l)}(1 - a^{(l)}))$<br>where $g’(z^{(l)}) = a^{(l)}(1 - a^{(l)})$, as mentioned in my previous note</li>
+<li>Sum $\Delta^{(l)} := \Delta^{(l)} + \delta^{(l+1)}(a^{(l)})^T$</li>
+<li>$D^{(l)}_{i,j} := \dfrac{1}{m}\left(\Delta^{(l)}_{i,j} + \lambda\Theta^{(l)}_{i,j}\right)$</li>
+</ul>
+<h4 id="2-1-Backpropagation-Implementation"><a href="#2-1-Backpropagation-Implementation" class="headerlink" title="2.1. Backpropagation Implementation"></a>2.1. Backpropagation Implementation</h4><p>Pseudo code in Octave:<br><figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:m</span><br><span class="line">    <span class="comment">% Forward propagation</span></span><br><span class="line">    a(<span class="number">1</span>) = x(<span class="built_in">i</span>);</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">2</span>:L</span><br><span class="line">        a(<span class="built_in">j</span>) = sigmoid([<span class="number">1</span> a(j<span class="number">-1</span>)] * theta(<span class="built_in">j</span><span class="number">-1</span>)); <span class="comment">% 1 is to add bias unit</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    <span class="comment">% end Forward propagation</span></span><br><span class="line">    </span><br><span class="line">    delta(L) = y - a(L);</span><br><span class="line">    <span class="comment">% Backpropagation</span></span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">j</span> = L - <span class="number">1</span> :<span class="number">2</span></span><br><span class="line">        <span class="comment">% theta_ is theta exclude bias unit</span></span><br><span class="line">        delta(<span class="built_in">j</span>) = (theta_(<span class="built_in">j</span>) * delta(<span class="built_in">j</span>+<span class="number">1</span>)).*(a(<span class="built_in">j</span>).*(<span class="number">1</span> - a(<span class="built_in">j</span>)));</span><br><span class="line">        theta_grad(<span class="built_in">j</span>) += delta(<span class="built_in">j</span>+<span class="number">1</span>) * [<span class="number">1</span> a(j)];</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    <span class="comment">% end Backpropagation</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"> <span class="comment">% theta_ is theta exclude bias unit</span></span><br><span class="line">theta_grad = theta_grad / m + theta_ * lambda / m;</span><br></pre></td></tr></table></figure></p>
+<h4 id="2-2-Mathematics-behind-backpropagation"><a href="#2-2-Mathematics-behind-backpropagation" class="headerlink" title="2.2. Mathematics behind backpropagation"></a>2.2. Mathematics behind backpropagation</h4><p>Backpropagation algorithm is like that a pound of water (input) flow into a (neural) network. We get each water in each level(layer) until the final layer(output). Every $\theta$ is like a pipe between each node. we want to know speed of water in a pipe (partial derivative) , so we use backward calculation to deduce the derivatives.<br>Backpropagation algorithm is a kind of <strong>DP</strong> (dynamic programming) algorithm, which reduce duplicate calculation to save time.</p>
+<ul>
+<li>Partial Derivative of Hypothesis part<br>$\frac\partial {\partial \Theta_{ij}^{(l)}}[-\frac{1}{m} \sum_{i=1}^m (y \log (h_\theta (x)) + (1 - y)\log (1 - h_\theta(x)))]$<br>for $\theta_{ij}^{(l)}$ it means in layer $l$ map $x_i^{(l)}$ to $x_{j}^{(l+1)}$<br><strong>What is $\delta_i^{(l)}$</strong><br>Definition<br>$\delta_i^{(l)} = \frac{\partial}{\partial z_i^{(l)}}J(\Theta)$<br>where $l$ is $lth$ layer in neural network, and $i$ is $ith$ node in this $lth$ layer.<br>In vector form, we can define $\delta^{(l)} = \frac{\partial}{\partial z^{(l)}}J(\Theta)$<br>So we calculate in vector form (ignore subscript $i$) to simplify.<br>Firstly we have the following equations by definition,<br>$z^{(l)} = a^{(l-1)}\cdot \theta^{(l-1)} $, where $l = 2, 3, …, L$<br>$a^{(l)} = f(z^{(l)})$, where $f$ is sigmoid function.<br>To simplify, we just use one sample $(x, y)$ and one dimention form for $x, y, \theta$ to conduct. The provement is same in vector form.<br><strong>Chain Rule Theorem:</strong> if $h(x)=f(g(x))$, $\frac{\partial}{\partial x}h(x)<br>=\frac{\partial}{\partial g(x)} f(g(x))\cdot\frac{\partial}{\partial x}g(x)$<br>Let’s prove:<blockquote>
+<p><strong>i. For output layer $L$</strong><br>$\delta^{(L)} = \frac{\partial}{\partial z^{(L)}}J(\Theta)<br>= \frac{\partial}{\partial a^{(L)}}J(\Theta)\cdot  \frac{\partial}{\partial z^{(L)}}a^{(L)}$<br>$= \frac{\partial}{\partial a^{(L)}}(-ylog(a^{(L)})-(1-y)log(1-a^{(L)}))\cdot  \frac{\partial}{\partial z^{(L)}}a^{(L)}$<br>$= (-\frac{y}{a^{(L)}} + \frac{1-y}{1-a^{(L)}})\cdot  \frac{\partial}{\partial z^{(L)}}a^{(L)}<br>= (-\frac{y}{a^{(L)}} + \frac{1-y}{1-a^{(L)}})\cdot f’(z^{(L)})$<br>$=(-\frac{y}{a^{(L)}} + \frac{1-y}{1-a^{(L)}})\cdot a^{(L)}(1-a^{(L)})$<br>$=a^{(L)}-y$<br><strong>ii.For $l = L-1, L-2, …, 2,$</strong><br>$\delta^{(l)} = \frac{\partial}{\partial z^{(l)}}J(\Theta) =\frac{\partial}{\partial z^{(l+1)}}J(\Theta)\cdot \frac{\partial}{\partial z^{(l)}} z^{(l+1)} $<br>$= \delta^{(l+1)}\cdot \frac{\partial}{\partial z^{(l)}} z^{(l+1)}<br>= \delta^{(l+1)}\cdot \frac{\partial}{\partial z^{(l)}}(a^{(l)}\theta^{(l)})$<br>$=\delta^{(l+1)}\theta^{(l)}\cdot \frac{\partial}{\partial z^{(l)}}a^{(l)}<br>= \delta^{(l+1)}\theta^{(l)}\cdot \frac{\partial}{\partial z^{(l)}}f(z^{(l)})$<br>$=\delta^{(l+1)}\theta^{(l)}\cdot f’(z^{(l)})$<br><strong>iii. So for $\Delta^{(l)}$</strong><br>$\Delta^{(l)}=\frac{\partial}{\partial{\theta^{(l)}}}J(\Theta)=\frac{\partial}{\partial{z^{(l+1)}}}J(\Theta)\cdot \frac{\partial}{\partial{\theta^{(l)}}}z^{(l+1)}$<br>$= \delta^{(l+1)} \cdot \frac{\partial}{\partial{\theta^{(l)}}}z^{(l+1)}<br>= \delta^{(l+1)} \cdot \frac{\partial}{\partial{\theta^{(l)}}}(a^{(l)}\theta^{(l)})$<br>$=\delta^{(l+1)}a^{(l)}$</p>
+</blockquote>
+</li>
+<li>Partial Derivatives of Regularization part.<br>Conduction is trivial<br>$\frac\partial {\partial \Theta_{ij}^l}(\frac{\lambda}{2m}\sum_{l=1}^{L-1} \sum_{i=1}^{s_l} \sum_{j=1}^{s_{l+1}} ( \Theta_{j,i}^l)^2)<br>= \frac{\lambda}{m}\Theta_{ij}^l$</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，据说打赏的人都实现一个小目标，赚了一个亿！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat.jpg" alt="Rick Yang 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="Rick Yang 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Machine-Learning/" rel="tag"># 机器学习</a>
+          
+            <a href="/tags/Coursera/" rel="tag"># Coursera</a>
+          
+            <a href="/tags/Mathematics/" rel="tag"># 数学</a>
+          
+            <a href="/tags/Notes/" rel="tag"># 学习笔记</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017-03/Hexo-NexT-Mathjax/" rel="next" title="Hexo & NexT & Mathjax">
+                <i class="fa fa-chevron-left"></i> Hexo & NexT & Mathjax
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017-03/Coursera_ML_MM/" rel="prev" title="Machine Learning Mind Map">
+                Machine Learning Mind Map <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Rick Yang" />
+            
+              <p class="site-author-name" itemprop="name">Rick Yang</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Neural-Network"><span class="nav-number">1.</span> <span class="nav-text">1. Neural Network</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Backpropagation-Algorithm"><span class="nav-number">2.</span> <span class="nav-text">2. Backpropagation Algorithm</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-Backpropagation-Implementation"><span class="nav-number">2.1.</span> <span class="nav-text">2.1. Backpropagation Implementation</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-Mathematics-behind-backpropagation"><span class="nav-number">2.2.</span> <span class="nav-text">2.2. Mathematics behind backpropagation</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Rick Yang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://rickdyang.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://blog.rickdyang.me/2017-03/Coursera_ML_02/';
+          this.page.identifier = '2017-03//Coursera_ML_02/';
+          this.page.title = 'Study Notes II - Coursera Machine Learning';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://rickdyang.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+
+  <script type="text/javascript" color="0,255,255" opacity='0.7' zIndex="-2" count="99" src="//cdn.bootcss.com/canvas-nest.js/1.0.1/canvas-nest.min.js"></script>
+
+</body>
+</html>
